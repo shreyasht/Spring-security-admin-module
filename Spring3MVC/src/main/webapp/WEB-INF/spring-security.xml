@@ -1,0 +1,46 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:sec="http://www.springframework.org/schema/security"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+    	http://www.springframework.org/schema/beans
+    	http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+    	http://www.springframework.org/schema/context
+    	http://www.springframework.org/schema/context/spring-context-3.1.xsd
+    	http://www.springframework.org/schema/security
+    	http://www.springframework.org/schema/security/spring-security-3.0.xsd
+    	http://www.springframework.org/schema/util
+    	http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+
+	<sec:http auto-config="true" >
+		<sec:intercept-url pattern="/welcome*" access="ROLE_USER" />
+		<sec:logout logout-success-url="/welcome" logout-url="/j_spring_security_logout" invalidate-session="true" />
+		<sec:intercept-url pattern="/j_spring_security_switch_user" access="ROLE_ADMIN"/>
+		<sec:custom-filter ref="switchUserProcessingFilter" after="FILTER_SECURITY_INTERCEPTOR"/>
+	</sec:http>
+	
+	<sec:authentication-manager alias="authManager">
+		<sec:authentication-provider user-service-ref="userService" />
+	</sec:authentication-manager>
+	
+	<sec:user-service id="userService">
+				<sec:user name="user" password="password" authorities="ROLE_USER" />
+				<sec:user name="user2" password="password2" authorities="ROLE_USER" />
+				<sec:user name="user3" password="password3" authorities="ROLE_USER" />
+				<sec:user name="user4" password="password4" authorities="ROLE_USER" />
+				<sec:user name="user5" password="password5" authorities="ROLE_USER" />
+				<sec:user name="admin" password="admin" authorities="ROLE_ADMIN" />
+	</sec:user-service>
+	
+
+
+	<bean id="switchUserProcessingFilter"
+		class="org.springframework.security.web.authentication.switchuser.SwitchUserFilter">
+		<property name="switchUserUrl" value="/j_spring_security_switch_user" />
+		<property name="switchFailureUrl" value="/" />
+		<property name="exitUserUrl" value="/j_spring_security_exit_user" />
+		<property name="targetUrl" value="/welcome" />
+		<property name="userDetailsService" ref="userService"/>
+	</bean>
+
+</beans>
