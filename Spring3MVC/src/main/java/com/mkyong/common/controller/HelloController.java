@@ -19,6 +19,7 @@ public class HelloController {
 		User principal = (User)SecurityContextHolder.getContext()
 	     .getAuthentication().getPrincipal();
 		model.addAttribute("username", principal.getUsername());
+		System.out.print("In controller");
 		return "hello";
  
 	}
